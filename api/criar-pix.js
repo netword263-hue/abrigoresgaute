@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 const BASE = "https://api.nexpaysolucoes.com";
-const VALOR_MIN = 1;
+const VALOR_MIN = 11;
 const VALOR_MAX = 5000; // ajuste ao seu caso
 
 let cache = { token: null, exp: 0 };
@@ -56,8 +56,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         amount: Math.round(amount * 100) / 100,
-        external_id: `PEDIDO-${randomUUID()}`,
-        description: "Pagamento Abrigo Resgate",
+        external_id: `DOACAO-${randomUUID()}`,
+        description: "Doação Abrigo Resgaute",
         ...(Object.keys(customer).length ? { customer } : {})
       })
     });

@@ -1,0 +1,59 @@
+{
+  "nome": "Resgaute",
+  "cnpj": "58.439.069/0001-04",
+  "recebedor": "RESGAUTE LTDA",
+  "cidade": "Vargem Grande Paulista, SP · Brasil",
+  "whatsapp": "+55 11 977338422",
+  "whatsappLink": "https://wa.me/5511977338422",
+  "email": "suporte@resgaute.com",
+  "redes": {
+    "facebook": "https://www.facebook.com/",
+    "instagram": "https://www.instagram.com/",
+    "tiktok": "https://www.tiktok.com/"
+  },
+  "ajude": [
+    {
+      "imagem": "/img/ajude-1.png",
+      "titulo": "SALVE UMA VIDA",
+      "texto": "Cada doação ajuda a crescer o abrigo e dar mais conforto e segurança para os animais que dependem de nós."
+    },
+    {
+      "imagem": "/img/ajude-2.png",
+      "titulo": "ALIMENTE UMA ESPERANÇA",
+      "texto": "Cada contribuição garante comida todos os dias para os animais resgatados."
+    },
+    {
+      "imagem": "/img/ajude-3.png",
+      "titulo": "CUIDE DA SAÚDE",
+      "texto": "Sua ajuda paga vacinas, vermífugos e tratamentos para quem mais precisa."
+    }
+  ],
+  "impacto": [
+    { "valor": 25, "rotulo": "R$ 25", "texto": "Uma semana de alimento e esperança para um animal." },
+    { "valor": 50, "rotulo": "R$ 50", "texto": "Saúde e nutrição para 2 animais durante 10 dias." },
+    { "valor": 100, "rotulo": "R$ 100", "texto": "Um saco de ração de 10kg, o suficiente para alimentar 5 vidas por 30 dias." },
+    { "valor": 200, "rotulo": "R$ 200", "texto": "Vacinas e vermífugos que protegem 4 animais contra doenças." },
+    { "valor": 500, "rotulo": "R$ 500", "texto": "Tratamento completo e digno por um mês para 3 animais." },
+    { "valor": 1000, "rotulo": "R$ 1.000", "texto": "Cirurgias de urgência e recuperação de animais em estado crítico." }
+  ],
+  "historias": [
+    { "imagem": "/img/historias/historia-1.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-2.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-3.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-4.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-5.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-6.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-7.webp", "alt": "Antes no abrigo, depois no novo lar" },
+    { "imagem": "/img/historias/historia-8.webp", "alt": "Antes no abrigo, depois no novo lar" }
+  ],
+  "adocoes": [
+    { "imagem": "/img/adocao/adocao-1.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-2.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-3.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-4.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-5.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-6.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-7.png", "alt": "Adoção que transforma vidas" },
+    { "imagem": "/img/adocao/adocao-8.png", "alt": "Adoção que transforma vidas" }
+  ]
+}

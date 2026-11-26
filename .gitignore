@@ -1,2 +1,9 @@
-node_modules
-_site
+node_modules/
+_site/
+.vercel/
+.env
+.env.*
+!.env.example
+
+# Vídeo temporariamente fora do Git
+/src/video/historia.mp4
