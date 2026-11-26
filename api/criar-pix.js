@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 const BASE = "https://api.nexpaysolucoes.com";
-const VALOR_MIN = 11;
+const VALOR_MIN = 1;
 const VALOR_MAX = 5000; // ajuste ao seu caso
 
 let cache = { token: null, exp: 0 };
