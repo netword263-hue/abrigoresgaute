@@ -1,4 +1,3 @@
-
 import { randomUUID } from "node:crypto";
 
 const BASE = "https://api.nexpaysolucoes.com";

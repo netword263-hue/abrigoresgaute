@@ -1,4 +1,3 @@
-
 /* ===== Carrosséis ===== */
 
 document.querySelectorAll("[data-carousel]").forEach((root) => {
