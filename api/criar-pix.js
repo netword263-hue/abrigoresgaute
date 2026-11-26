@@ -1,8 +1,9 @@
+
 import { randomUUID } from "node:crypto";
 
 const BASE = "https://api.nexpaysolucoes.com";
 const VALOR_MIN = 1;
-const VALOR_MAX = 5000; // ajuste ao seu caso
+const VALOR_MAX = 5000;
 
 let cache = { token: null, exp: 0 };
 
@@ -20,10 +21,15 @@ async function getToken() {
       "Content-Type": "application/json"
     }
   });
+
   if (!r.ok) throw new Error(`login falhou: ${r.status}`);
 
   const d = await r.json();
-  cache = { token: d.access_token, exp: Date.now() + (d.expires_in - 60) * 1000 };
+  cache = {
+    token: d.access_token,
+    exp: Date.now() + (d.expires_in - 60) * 1000
+  };
+
   return cache.token;
 }
 
@@ -36,11 +42,13 @@ export default async function handler(req, res) {
     const { valor, nome, email, telefone, documento } = req.body || {};
 
     const amount = Number(valor);
+
     if (!Number.isFinite(amount) || amount < VALOR_MIN || amount > VALOR_MAX) {
       return res.status(400).json({ error: "Valor inválido" });
     }
 
     const customer = {};
+
     if (nome) customer.name = String(nome).slice(0, 100);
     if (email) customer.email = String(email).slice(0, 100);
     if (telefone) customer.phone = String(telefone).replace(/\D/g, "");
@@ -66,7 +74,9 @@ export default async function handler(req, res) {
 
     if (!r.ok) {
       console.error("Nexpay charge erro", r.status, data);
-      return res.status(502).json({ error: "Não foi possível gerar o Pix" });
+      return res.status(502).json({
+        error: "Não foi possível gerar o Pix"
+      });
     }
 
     return res.status(200).json({

@@ -1,3 +1,4 @@
+
 /* ===== Carrosséis ===== */
 document.querySelectorAll("[data-carousel]").forEach((root) => {
   const track = root.querySelector(".track");
@@ -11,6 +12,7 @@ document.querySelectorAll("[data-carousel]").forEach((root) => {
   }
 
   let atual = 0;
+
   const dots = slides.map((_, i) => {
     const d = document.createElement("button");
     d.type = "button";
@@ -21,32 +23,35 @@ document.querySelectorAll("[data-carousel]").forEach((root) => {
     return d;
   });
 
-  const marcar = () => dots.forEach((d, i) => d.classList.toggle("on", i === atual));
+  const marcar = () => dots.forEach((d, i) =>
+    d.classList.toggle("on", i === atual)
+  );
 
   function ir(i) {
     atual = (i + slides.length) % slides.length;
-    track.scrollTo({ left: atual * track.clientWidth, behavior: "smooth" });
+    track.scrollTo({
+      left: atual * track.clientWidth,
+      behavior: "smooth"
+    });
     marcar();
   }
 
   root.querySelector(".prev").addEventListener("click", () => ir(atual - 1));
   root.querySelector(".next").addEventListener("click", () => ir(atual + 1));
-  track.addEventListener(
-    "scroll",
-    () => {
-      const i = Math.round(track.scrollLeft / track.clientWidth);
-      if (i !== atual) {
-        atual = i;
-        marcar();
-      }
-    },
-    { passive: true }
-  );
+
+  track.addEventListener("scroll", () => {
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    if (i !== atual) {
+      atual = i;
+      marcar();
+    }
+  }, { passive: true });
+
   marcar();
 });
 
 /* ===== Doação via Pix ===== */
-const VALOR_MIN = 11;
+const VALOR_MIN = 1;
 const valorInput = document.getElementById("valor");
 const btn = document.getElementById("btn-pix");
 const out = document.getElementById("resultado");
@@ -61,6 +66,7 @@ function mostrarErro(msg) {
 
 function marcarValor() {
   const v = Number(valorInput.value);
+
   document.querySelectorAll(".valores [data-valor]").forEach((b) => {
     b.classList.toggle("on", Number(b.dataset.valor) === v);
   });
@@ -70,17 +76,22 @@ document.querySelectorAll("[data-valor]").forEach((b) => {
   b.addEventListener("click", () => {
     valorInput.value = b.dataset.valor;
     marcarValor();
+
     if (!b.closest(".valores")) {
-      document.getElementById("doar").scrollIntoView({ behavior: "smooth" });
+      document.getElementById("doar").scrollIntoView({
+        behavior: "smooth"
+      });
     }
   });
 });
+
 valorInput.addEventListener("input", marcarValor);
 
 btn.addEventListener("click", async () => {
   const valor = Number(valorInput.value);
+
   if (!Number.isFinite(valor) || valor < VALOR_MIN) {
-    mostrarErro("Escolha um valor ou informe pelo menos R$ " + VALOR_MIN + ".");
+    mostrarErro("Escolha um valor ou informe pelo menos R$ 1,00.");
     return;
   }
 
@@ -93,7 +104,9 @@ btn.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ valor })
     });
+
     const data = await res.json();
+
     if (!res.ok) throw new Error(data.error || "Erro ao gerar o Pix");
 
     out.textContent = "";
@@ -101,10 +114,16 @@ btn.addEventListener("click", async () => {
     const qrBox = document.createElement("div");
     qrBox.className = "qr";
     out.appendChild(qrBox);
-    new QRCode(qrBox, { text: data.qrcode, width: 220, height: 220 });
+
+    new QRCode(qrBox, {
+      text: data.qrcode,
+      width: 220,
+      height: 220
+    });
 
     const aviso = document.createElement("p");
-    aviso.textContent = "Abra o app do seu banco, escolha Pix e leia o QR Code, ou use o código abaixo:";
+    aviso.textContent =
+      "Abra o app do seu banco, escolha Pix e leia o QR Code, ou use o código abaixo:";
     out.appendChild(aviso);
 
     const code = document.createElement("textarea");
@@ -117,6 +136,7 @@ btn.addEventListener("click", async () => {
     copiar.type = "button";
     copiar.className = "copiar";
     copiar.textContent = "Copiar código Pix";
+
     copiar.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(data.qrcode);
@@ -124,9 +144,13 @@ btn.addEventListener("click", async () => {
         code.select();
         document.execCommand("copy");
       }
+
       copiar.textContent = "Copiado! 💙";
-      setTimeout(() => (copiar.textContent = "Copiar código Pix"), 2000);
+      setTimeout(() => {
+        copiar.textContent = "Copiar código Pix";
+      }, 2000);
     });
+
     out.appendChild(copiar);
   } catch (e) {
     mostrarErro(e.message);
