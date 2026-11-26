@@ -56,7 +56,7 @@ document.querySelectorAll("[data-carousel]").forEach((root) => {
 
 /* ===== Doação via Pix ===== */
 
-const VALOR_MIN = 1;
+const VALOR_MIN = 10;
 const VALOR_MAX = 5000;
 
 const valorInput = document.getElementById("valor");
@@ -105,7 +105,7 @@ btn.addEventListener("click", async () => {
     valor > VALOR_MAX
   ) {
     mostrarErro(
-      "Informe um valor entre R$ 1,00 e R$ 5.000,00."
+      "Informe um valor entre R$ 10,00 e R$ 5.000,00."
     );
     return;
   }

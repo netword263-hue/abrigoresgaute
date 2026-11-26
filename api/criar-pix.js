@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 const BASE = "https://api.nexpaysolucoes.com";
-const VALOR_MIN = 1;
+const VALOR_MIN = 10;
 const VALOR_MAX = 5000;
 
 let cache = { token: null, exp: 0 };
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
       amount > VALOR_MAX
     ) {
       return res.status(400).json({
-        error: "O valor deve ser entre R$ 1,00 e R$ 5.000,00."
+        error: "O valor deve ser entre R$ 10,00 e R$ 5.000,00."
       });
     }
 
