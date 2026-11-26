@@ -8,7 +8,9 @@ const VALOR_MAX = 5000;
 let cache = { token: null, exp: 0 };
 
 async function getToken() {
-  if (cache.token && Date.now() < cache.exp) return cache.token;
+  if (cache.token && Date.now() < cache.exp) {
+    return cache.token;
+  }
 
   const basic = Buffer.from(
     `${process.env.NEXPAY_CLIENT_ID}:${process.env.NEXPAY_CLIENT_SECRET}`
@@ -22,9 +24,12 @@ async function getToken() {
     }
   });
 
-  if (!r.ok) throw new Error(`login falhou: ${r.status}`);
+  if (!r.ok) {
+    throw new Error(`login falhou: ${r.status}`);
+  }
 
   const d = await r.json();
+
   cache = {
     token: d.access_token,
     exp: Date.now() + (d.expires_in - 60) * 1000
@@ -35,7 +40,9 @@ async function getToken() {
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
+    return res.status(405).json({
+      error: "Método não permitido"
+    });
   }
 
   try {
@@ -43,8 +50,14 @@ export default async function handler(req, res) {
 
     const amount = Number(valor);
 
-    if (!Number.isFinite(amount) || amount < VALOR_MIN || amount > VALOR_MAX) {
-      return res.status(400).json({ error: "Valor inválido" });
+    if (
+      !Number.isFinite(amount) ||
+      amount < VALOR_MIN ||
+      amount > VALOR_MAX
+    ) {
+      return res.status(400).json({
+        error: "O valor deve ser entre R$ 1,00 e R$ 5.000,00."
+      });
     }
 
     const customer = {};
@@ -74,8 +87,9 @@ export default async function handler(req, res) {
 
     if (!r.ok) {
       console.error("Nexpay charge erro", r.status, data);
+
       return res.status(502).json({
-        error: "Não foi possível gerar o Pix"
+        error: "Não foi possível gerar o Pix. Verifique o valor ou tente novamente."
       });
     }
 
@@ -85,8 +99,12 @@ export default async function handler(req, res) {
       qrcode: data.qrcode,
       status: data.status
     });
+
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "Erro interno" });
+
+    return res.status(500).json({
+      error: "Erro interno ao gerar o Pix."
+    });
   }
 }
