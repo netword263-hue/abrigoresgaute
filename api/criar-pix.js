@@ -1,3 +1,4 @@
+
 import { randomUUID } from "node:crypto";
 
 const BASE = "https://api.nexpaysolucoes.com";
@@ -11,8 +12,15 @@ async function getToken() {
     return cache.token;
   }
 
+  const clientId = process.env.NEXPAY_CLIENT_ID;
+  const clientSecret = process.env.NEXPAY_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error("Credenciais Nexpay não configuradas na Vercel.");
+  }
+
   const basic = Buffer.from(
-    `${process.env.NEXPAY_CLIENT_ID}:${process.env.NEXPAY_CLIENT_SECRET}`
+    `${clientId}:${clientSecret}`
   ).toString("base64");
 
   const r = await fetch(`${BASE}/api/auth/login`, {
@@ -23,15 +31,27 @@ async function getToken() {
     }
   });
 
+  const texto = await r.text();
+
+  let data = {};
+  try {
+    data = JSON.parse(texto);
+  } catch {}
+
   if (!r.ok) {
-    throw new Error(`login falhou: ${r.status}`);
+    console.error("Nexpay login erro:", r.status, texto.slice(0, 500));
+    throw new Error(`Falha no login Nexpay: HTTP ${r.status}`);
   }
 
-  const d = await r.json();
+  if (!data.access_token) {
+    throw new Error("A Nexpay não retornou access_token.");
+  }
+
+  const expiresIn = Number(data.expires_in) || 3600;
 
   cache = {
-    token: d.access_token,
-    exp: Date.now() + (d.expires_in - 60) * 1000
+    token: data.access_token,
+    exp: Date.now() + Math.max(expiresIn - 60, 60) * 1000
   };
 
   return cache.token;
@@ -40,7 +60,7 @@ async function getToken() {
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
-      error: "Método não permitido"
+      error: "Método não permitido."
     });
   }
 
@@ -63,10 +83,21 @@ export default async function handler(req, res) {
 
     if (nome) customer.name = String(nome).slice(0, 100);
     if (email) customer.email = String(email).slice(0, 100);
-    if (telefone) customer.phone = String(telefone).replace(/\D/g, "");
-    if (documento) customer.document = String(documento).replace(/\D/g, "");
+    if (telefone) {
+      customer.phone = String(telefone).replace(/\D/g, "");
+    }
+    if (documento) {
+      customer.document = String(documento).replace(/\D/g, "");
+    }
 
     const token = await getToken();
+
+    const payload = {
+      amount: Math.round(amount * 100) / 100,
+      external_id: `DOACAO-${randomUUID()}`,
+      description: "Doação Abrigo Resgaute",
+      ...(Object.keys(customer).length ? { customer } : {})
+    };
 
     const r = await fetch(`${BASE}/api/pix/charge`, {
       method: "POST",
@@ -74,26 +105,32 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        amount: Math.round(amount * 100) / 100,
-        external_id: `DOACAO-${randomUUID()}`,
-        description: "Doação Abrigo Resgaute",
-        ...(Object.keys(customer).length ? { customer } : {})
-      })
+      body: JSON.stringify(payload)
     });
 
-    // Lê o texto cru para registrar o motivo real do erro
     const texto = await r.text();
+
     let data = {};
     try {
       data = JSON.parse(texto);
     } catch {}
 
     if (!r.ok) {
-      console.error("Nexpay charge erro", r.status, texto.slice(0, 500));
+      console.error("Nexpay charge erro:", {
+        status: r.status,
+        resposta: texto.slice(0, 1000)
+      });
 
       return res.status(502).json({
-        error: "Não foi possível gerar o Pix. Verifique o valor ou tente novamente."
+        error: "Não foi possível gerar o Pix. Tente novamente."
+      });
+    }
+
+    if (!data.qrcode) {
+      console.error("Nexpay resposta sem QR Code:", texto.slice(0, 1000));
+
+      return res.status(502).json({
+        error: "A Nexpay não retornou um código Pix válido."
       });
     }
 
@@ -105,6 +142,10 @@ export default async function handler(req, res) {
     });
 
   } catch (e) {
-    console.error(e);
+    console.error("Erro na API criar-pix:", e.message);
 
     return res.status(500).json({
+      error: "Erro interno ao gerar o Pix."
+    });
+  }
+}
