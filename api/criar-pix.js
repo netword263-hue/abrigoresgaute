@@ -82,10 +82,15 @@ export default async function handler(req, res) {
       })
     });
 
-    const data = await r.json().catch(() => ({}));
+    // Lê o texto cru para registrar o motivo real do erro
+    const texto = await r.text();
+    let data = {};
+    try {
+      data = JSON.parse(texto);
+    } catch {}
 
     if (!r.ok) {
-      console.error("Nexpay charge erro", r.status, data);
+      console.error("Nexpay charge erro", r.status, texto.slice(0, 500));
 
       return res.status(502).json({
         error: "Não foi possível gerar o Pix. Verifique o valor ou tente novamente."
@@ -103,7 +108,3 @@ export default async function handler(req, res) {
     console.error(e);
 
     return res.status(500).json({
-      error: "Erro interno ao gerar o Pix."
-    });
-  }
-}
